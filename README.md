@@ -35,4 +35,7 @@ npm run dev
 
 ## 배포 (Vercel)
 
-GitHub 저장소를 Vercel에 Import 하고 위 환경변수를 등록하면 됩니다. 이미지 생성 라우트는 `maxDuration = 300`으로 설정되어 있습니다.
+- 서비스 주소: https://cardnews-studio-beta.vercel.app
+- 저장소: https://github.com/kds132-bot/cardnews-studio
+
+GitHub 저장소를 Vercel에 Import 하고 위 환경변수를 등록하면 됩니다. Vercel 프로젝트 설정 → Environment Variables 에 `OPENAI_API_KEY`를 반드시 추가하세요. 이미지 생성 라우트는 `maxDuration = 300`으로 설정되어 있습니다.
