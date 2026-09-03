@@ -1,5 +1,6 @@
 import { requireUser } from "@/lib/supabase/server";
 import { errorJson } from "@/lib/storage";
+import type { Card } from "@/lib/types";
 
 const EDITABLE = [
   "title",
@@ -35,6 +36,16 @@ export async function PATCH(req: Request, ctx: RouteContext<"/api/projects/[id]"
     const body = await req.json();
     const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
     for (const k of EDITABLE) if (k in body) patch[k] = body[k];
+
+    // Never let a stale client save wipe an image URL that the server already stored
+    // (image generation and autosave can race).
+    if (Array.isArray(patch.cards)) {
+      const { data: existing } = await supabase.from("projects").select("cards").eq("id", id).single<{ cards: Card[] }>();
+      const byId = new Map((existing?.cards ?? []).map((c) => [c.id, c]));
+      patch.cards = (patch.cards as Card[]).map((c) =>
+        !c.imageUrl && byId.get(c.id)?.imageUrl ? { ...c, imageUrl: byId.get(c.id)!.imageUrl } : c,
+      );
+    }
     const { data, error } = await supabase.from("projects").update(patch).eq("id", id).select().single();
     if (error) return errorJson(error.message);
     return Response.json({ project: data });
