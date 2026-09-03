@@ -79,10 +79,14 @@ export default function Editor({ initial, autogen }: { initial: Project; autogen
       });
       const j = await res.json();
       if (!res.ok) throw new Error(j.error);
-      setProject((prev) => ({
-        ...prev,
-        cards: prev.cards.map((c) => (c.id === cardId ? { ...c, imageUrl: j.imageUrl, imagePrompt: prompt ?? c.imagePrompt } : c)),
-      }));
+      setProject((prev) => {
+        const next = {
+          ...prev,
+          cards: prev.cards.map((c) => (c.id === cardId ? { ...c, imageUrl: j.imageUrl, imagePrompt: prompt ?? c.imagePrompt } : c)),
+        };
+        projectRef.current = next;
+        return next;
+      });
     } finally {
       setGenerating((s) => { const n = new Set(s); n.delete(cardId); return n; });
     }
@@ -120,7 +124,9 @@ export default function Editor({ initial, autogen }: { initial: Project; autogen
       const j = await res.json();
       if (!res.ok) throw new Error(j.error);
       const p = j.project as Project;
-      setProject((prev) => ({ ...prev, ...p, design: { ...DEFAULT_DESIGN, ...p.design } }));
+      const next: Project = { ...projectRef.current, ...p, design: { ...DEFAULT_DESIGN, ...p.design } };
+      projectRef.current = next; // keep the ref current so generateMissing() sees the new cards immediately
+      setProject(next);
       setSelectedId(p.cards[0]?.id ?? null);
       return true;
     } catch (e) {
