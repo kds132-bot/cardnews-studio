@@ -1,0 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Nanum+Myeongjo:wght@400;700;800&family=Black+Han+Sans&family=Do+Hyeon&family=Gowun+Dodum&family=Jua&display=swap");
+@import "tailwindcss";
+
+:root {
+  --background: #f6f7fb;
+  --foreground: #14161c;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+}
+
+/* keep the Korean web fonts warm so canvas rendering can use them immediately */
+.font-preload span { position: absolute; opacity: 0; pointer-events: none; }
+
+input[type="range"] { accent-color: #4f46e5; }
+
+@layer components {
+  .btn, .btn-primary, .btn-secondary, .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary { @apply bg-indigo-600 text-white hover:bg-indigo-700; }
+  .btn-secondary { @apply border border-gray-300 bg-white text-gray-800 hover:bg-gray-50; }
+  .btn-danger { @apply border border-red-200 bg-white text-red-600 hover:bg-red-50; }
+  .input { @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100; }
+  .label { @apply mb-1 block text-xs font-semibold text-gray-600; }
+  .card { @apply rounded-2xl border border-gray-200 bg-white shadow-sm; }
+}
